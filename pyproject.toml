@@ -1,12 +1,17 @@
-[build-system]
-requires = ["flit"]
-build-backend = "flit.buildapi"
+[tool.poetry]
+name = "clickable-ansible"
+version = "0.1.0"
+description = ""
+authors = ["Laurent Almeras <laurent.almeras@kobalt.fr>"]
+packages = [ { include = "clickable_ansible" } ]
 
-[tool.flit.metadata]
-module = "clickable_ansible"
-author = "Laurent Almeras"
-author-email = "lalmeras@gmail.com"
-home-page = "https://github.com/lalmeras/clickable"
-classifiers = ["License :: OSI Approved :: MIT License"]
-requires = ["clickable_logging == 0.9.0"]
-dev-requires = ["IPython", "pytest"]
+[tool.poetry.dependencies]
+clickable = { git = "https://github.com/lalmeras/clickable.git", branch = "ft-ansible" }
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
+
