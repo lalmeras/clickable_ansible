@@ -41,7 +41,8 @@ def _configure(ctx):
     virtualenv_path = ctx_get(ctx, 'virtualenv_path')
     clickable.utils.oneline_run(_vcommand(virtualenv_path, 'ansible-galaxy',
                       'install',
-                      '-r', 'requirements.yml',
+                      '-n', # do not install recursive dependencies
+                      '-r', 'dependencies/requirements.yml',
                       '--roles-path', 'dependencies/galaxy-roles'))
 
 
