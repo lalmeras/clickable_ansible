@@ -69,7 +69,7 @@ def run_playbook(ctx, playbook=None,
     virtualenv_path = ctx_get(ctx, 'virtualenv_path')
     os.environ['PATH'] = \
         os.path.join(virtualenv_path, 'bin') + ':' + os.environ['PATH']
-    os.environ['ANSIBLE_CONFIG'] = 'etc/ansible.cfg'
+    os.environ['ANSIBLE_CONFIG'] = 'inventory/ansible.cfg'
     if os.path.exists('.vault_pass.txt'):
         os.environ['ANSIBLE_VAULT_PASSWORD_FILE'] = '.vault_pass.txt'
         ask_vault_pass = False
