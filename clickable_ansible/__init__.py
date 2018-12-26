@@ -42,7 +42,7 @@ def _configure(ctx):
     clickable.utils.oneline_run(_vcommand(virtualenv_path, 'ansible-galaxy',
                       'install',
                       '-r', 'requirements.yml',
-                      '--roles-path', 'dependencies/'))
+                      '--roles-path', 'dependencies/galaxy-roles'))
 
 
 def _vault_secure_yaml(ctx):
