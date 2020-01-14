@@ -171,11 +171,12 @@ def run_playbook_task(click_group, name, playbook, static_extra_vars=[],
     @click.option('-l', '--limit', default=[], multiple=True)
     @click.option('--tags', '-t', default=[], multiple=True)
     @click.option('--extra-vars', '-e', default=[], multiple=True)
+    @click.option('--extra-args', '-a', default=[], multiple=True)
     @decorate(decorators)
     def inside_run(ctx,
                    ask_become_pass, ask_vault_pass,
                    check, diff, verbose,
-                   tags, limit, extra_vars):
+                   tags, limit, extra_vars, extra_args):
         merged_vars = list(static_extra_vars)
         merged_vars.extend(extra_vars)
         _configure(ctx)
