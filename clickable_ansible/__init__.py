@@ -66,7 +66,7 @@ def run_playbook(ctx, playbook=None,
                  ask_become_pass=False, ask_vault_pass=False,
                  check=False, diff=False,
                  verbose=False, tags=None, limit=[],
-                 extra_vars=[]):
+                 extra_vars=[], extra_args=[]):
     virtualenv_path = ctx_get(ctx, 'virtualenv_path')
     os.environ['PATH'] = \
         os.path.join(virtualenv_path, 'bin') + ':' + os.environ['PATH']
@@ -95,6 +95,9 @@ def run_playbook(ctx, playbook=None,
     if extra_vars:
         for extra_var in extra_vars:
             args.extend(['-e', extra_var])
+    if extra_args:
+        for extra_arg in extra_args:
+            args.extend(extra_arg)
     clickable.utils.interactive(_vcommand(virtualenv_path, 'ansible-playbook', *args))
 
 
