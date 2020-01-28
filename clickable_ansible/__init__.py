@@ -191,7 +191,8 @@ def run_playbook_task(click_group, name, playbook, static_extra_vars=[],
                      ask_vault_pass=ask_vault_pass, check=check,
                      diff=diff, verbose=verbose, tags=','.join(tags),
                      limit=limit,
-                     extra_vars=merged_vars)
+                     extra_vars=merged_vars,
+                     extra_args=extra_args)
     return click_group.command(name, help=help, short_help=short_help)(inside_run)
 
 
