@@ -97,7 +97,7 @@ def run_playbook(ctx, playbook=None,
             args.extend(['-e', extra_var])
     if extra_args:
         for extra_arg in extra_args:
-            args.extend(extra_arg)
+            args.append(extra_arg)
     clickable.utils.interactive(_vcommand(virtualenv_path, 'ansible-playbook', *args))
 
 
