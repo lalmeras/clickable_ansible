@@ -67,13 +67,6 @@ def run_playbook(ctx, playbook=None,
                  check=False, diff=False,
                  verbose=False, tags=None, limit=[],
                  extra_vars=[], extra_args=[]):
-    virtualenv_path = ctx_get(ctx, 'virtualenv_path')
-    os.environ['PATH'] = \
-        os.path.join(virtualenv_path, 'bin') + ':' + os.environ['PATH']
-    os.environ['ANSIBLE_CONFIG'] = 'inventory/ansible.cfg'
-    if os.path.exists('.vault_pass.txt'):
-        os.environ['ANSIBLE_VAULT_PASSWORD_FILE'] = '.vault_pass.txt'
-        ask_vault_pass = False
     args = [playbook]
     if ask_become_pass:
         args.append('--ask-become-pass')
@@ -98,7 +91,26 @@ def run_playbook(ctx, playbook=None,
     if extra_args:
         for extra_arg in extra_args:
             args.append(extra_arg)
-    clickable.utils.interactive(_vcommand(virtualenv_path, 'ansible-playbook', *args))
+    command = ['ansible-playbook'] + args
+    run_interactive(ctx, 'ansible-playbook', args, verbose)
+
+
+def run_interactive(ctx, command, args, print_command):
+    virtualenv_path = ctx_get(ctx, 'virtualenv_path')
+    environ = {}
+    environ['PATH'] = \
+        os.path.join(virtualenv_path, 'bin') + ':' + os.environ['PATH']
+    environ['ANSIBLE_CONFIG'] = 'inventory/ansible.cfg'
+    if os.path.exists('.vault_pass.txt'):
+        environ['ANSIBLE_VAULT_PASSWORD_FILE'] = '.vault_pass.txt'
+        ask_vault_pass = False
+    os.environ.update(environ)
+    if print_command:
+        environ = ' '.join(['{}={}'.format(key, quote(value)) for key, value in environ.items()])
+        all_args = [os.path.join(virtualenv_path, 'bin', command)] + args
+        all_command = ' '.join([quote(i) for i in all_args])
+        logger.info('running: {} {}'.format(environ, all_command))
+    clickable.utils.interactive(_vcommand(virtualenv_path, command, *args))
 
 
 def run_ansible_module(ctx, host, module, module_args,
@@ -107,13 +119,6 @@ def run_ansible_module(ctx, host, module, module_args,
                        ask_become_pass=False, ask_vault_pass=False,
                        check=False, diff=False,
                        verbose=False, extra_vars=None):
-    virtualenv_path = ctx_get(ctx, 'virtualenv_path')
-    os.environ['PATH'] = \
-        os.path.join(virtualenv_path, 'bin') + ':' + os.environ['PATH']
-    os.environ['ANSIBLE_CONFIG'] = 'inventory/ansible.cfg'
-    if os.path.exists('.vault_pass.txt'):
-        os.environ['ANSIBLE_VAULT_PASSWORD_FILE'] = '.vault_pass.txt'
-        ask_vault_pass = False
     args = []
     args.append(host)
     args.append('-m')
@@ -148,7 +153,7 @@ def run_ansible_module(ctx, host, module, module_args,
     if extra_vars:
         for extra_var in extra_vars:
             args.extend(['-e', extra_var])
-    clickable.utils.interactive(_vcommand(virtualenv_path, 'ansible', *args))
+    run_interactive(ctx, 'ansible', args, verbose)
 
 
 def run(ctx, playbook=None,
