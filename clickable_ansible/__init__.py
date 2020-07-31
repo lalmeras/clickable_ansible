@@ -118,7 +118,7 @@ def run_ansible_module(ctx, host, module, module_args,
                        become=False, become_user='root',
                        ask_become_pass=False, ask_vault_pass=False,
                        check=False, diff=False,
-                       verbose=False, extra_vars=None):
+                       verbose=False, extra_vars=None, extra_args=None):
     args = []
     args.append(host)
     args.append('-m')
@@ -153,6 +153,9 @@ def run_ansible_module(ctx, host, module, module_args,
     if extra_vars:
         for extra_var in extra_vars:
             args.extend(['-e', extra_var])
+    if extra_args:
+        for extra_arg in extra_args:
+            args.append(extra_arg)
     run_interactive(ctx, 'ansible', args, verbose)
 
 
@@ -218,11 +221,12 @@ def run_module_task(click_group, name, static_args='',
     @click.option('--diff', '-D', default=False, is_flag=True)
     @click.option('-v', '--verbose', count=True)
     @click.option('--extra-vars', '-e', default=[])
+    @click.option('--extra-args', '-a', default=[])
     @decorate(decorators)
     def inside_run(ctx, host, module_name, user, args, inventory,
                    become, become_user, ask_become_pass, ask_vault_pass,
                    check, diff, verbose,
-                   extra_vars):
+                   extra_vars, extra_args):
         merged_vars = list(static_extra_vars)
         merged_vars.extend(extra_vars)
         merged_args = []
@@ -238,7 +242,7 @@ def run_module_task(click_group, name, static_args='',
                            ask_become_pass=ask_become_pass,
                            ask_vault_pass=ask_vault_pass, check=check,
                            diff=diff, verbose=verbose,
-                           extra_vars=extra_vars)
+                           extra_vars=extra_vars, extra_args=extra_args)
     return click_group.command(name)(inside_run)
 
 
