@@ -171,9 +171,10 @@ def run(ctx, playbook=None,
 
 
 def run_playbook_task(click_group, name, playbook, static_extra_vars=[],
-        decorators=[], help=None, short_help=None,
+        static_extra_args=[], decorators=[], help=None, short_help=None,
         common_hosts=False):
     @click.pass_context
+    @click.argument('extra-args', nargs=-1)
     @click.option('--ask-become-pass', '-K', default=False, is_flag=True)
     @click.option('--ask-vault-pass', default=False, is_flag=True)
     @click.option('--check', '-C', default=False, is_flag=True)
@@ -182,7 +183,6 @@ def run_playbook_task(click_group, name, playbook, static_extra_vars=[],
     @click.option('-l', '--limit', default=[], multiple=True)
     @click.option('--tags', '-t', default=[], multiple=True)
     @click.option('--extra-vars', '-e', default=[], multiple=True)
-    @click.option('--extra-args', '-a', default=[], multiple=True)
     @decorate(decorators)
     def inside_run(ctx,
                    ask_become_pass, ask_vault_pass,
@@ -195,6 +195,14 @@ def run_playbook_task(click_group, name, playbook, static_extra_vars=[],
             merged_vars.append('{}={}'.format('common_hosts', common_hosts))
         else:
             merged_vars.append('{}={}'.format('common_hosts', 'all'))
+        
+        # command-line or statically supplied ansible-playbook command line
+        # arguments
+        merged_extra_args = []
+        if extra_args:
+            merged_extra_args.extend(extra_args)
+        if static_extra_args:
+            merged_extra_args.extend(static_extra_args)
         run_playbook(ctx, playbook, ask_become_pass=ask_become_pass,
                      ask_vault_pass=ask_vault_pass, check=check,
                      diff=diff, verbose=verbose, tags=','.join(tags),
@@ -205,9 +213,14 @@ def run_playbook_task(click_group, name, playbook, static_extra_vars=[],
 
 
 def run_module_task(click_group, name, static_args='',
-        static_extra_vars=[], decorators=[]):
+        static_extra_vars=[], static_extra_args=[], decorators=[]):
+    """
+    static_args: static args for module
+    static_extra_args: static args for ansible command
+    """
     @click.pass_context
     @click.argument('host')
+    @click.argument('extra-args', nargs=-1)
     @click.option('--module-name', '-m', help='module name')
     @click.option('--become', '-b',
                   default=False, help='use become', is_flag=True)
@@ -221,7 +234,6 @@ def run_module_task(click_group, name, static_args='',
     @click.option('--diff', '-D', default=False, is_flag=True)
     @click.option('-v', '--verbose', count=True)
     @click.option('--extra-vars', '-e', default=[])
-    @click.option('--extra-args', '-a', default=[])
     @decorate(decorators)
     def inside_run(ctx, host, module_name, user, args, inventory,
                    become, become_user, ask_become_pass, ask_vault_pass,
@@ -229,11 +241,21 @@ def run_module_task(click_group, name, static_args='',
                    extra_vars, extra_args):
         merged_vars = list(static_extra_vars)
         merged_vars.extend(extra_vars)
+        # module args, combination of command-line supplied and statically
+        # supplied arguments (mainly key=value pairs)
         merged_args = []
         if static_args:
             merged_args.append(static_args)
         if args:
             merged_args.append(args)
+
+        # ansible command args, command-line supplied or statically-supplied
+        merged_extra_args = []
+        if extra_args:
+            merged_extra_args.extend(extra_args)
+        if static_extra_args:
+            merged_extra_args.extend(static_extra_args)
+
         _configure(ctx)
         run_ansible_module(ctx, host, module_name,
                            ' '.join(merged_args) if merged_args else '',
