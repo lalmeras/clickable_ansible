@@ -22,7 +22,7 @@ test_requirements = [
 
 setup(
     name='clickable_ansible',
-    version="0.9",
+    version="1.0.dev0",
     description=("Ansible helpers for clickable."),
     long_description=readme + '\n\n' + history,
     author="Laurent Almeras",
