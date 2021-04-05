@@ -1,0 +1,1 @@
+clickable @ git+https://github.com/lalmeras/clickable@dev
