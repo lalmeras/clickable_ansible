@@ -208,7 +208,7 @@ def run_playbook_task(click_group, name, playbook, static_extra_vars=[],
                      diff=diff, verbose=verbose, tags=','.join(tags),
                      limit=limit,
                      extra_vars=merged_vars,
-                     extra_args=extra_args)
+                     extra_args=merged_extra_args)
     return click_group.command(name, help=help, short_help=short_help)(inside_run)
 
 
@@ -264,7 +264,7 @@ def run_module_task(click_group, name, static_args='',
                            ask_become_pass=ask_become_pass,
                            ask_vault_pass=ask_vault_pass, check=check,
                            diff=diff, verbose=verbose,
-                           extra_vars=extra_vars, extra_args=extra_args)
+                           extra_vars=extra_vars, extra_args=merged_extra_args)
     return click_group.command(name)(inside_run)
 
 
