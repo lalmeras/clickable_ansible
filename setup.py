@@ -11,9 +11,6 @@ with open('README.md') as readme_file:
 with open('HISTORY.md') as history_file:
     history = history_file.read()
 
-with open('requirements.txt') as requirements_file:
-    requirements = requirements_file.read()
-
 setup_requirements = [
 ]
 
@@ -34,7 +31,9 @@ setup(
         ]
     },
     include_package_data=True,
-    install_requires=requirements,
+    install_requires=[
+        "clickable == 1.0.dev0"
+    ],
     python_requires='>=3.6',
     license="BSD license",
     zip_safe=False,
