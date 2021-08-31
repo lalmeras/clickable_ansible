@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.md') as history_file:
+with open('CHANGELOG.md') as history_file:
     history = history_file.read()
 
 setup_requirements = [
@@ -32,7 +32,7 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        "clickable @ git+https://github.com/lalmeras/clickable@v1.0#egg=clickable"
+        "clickable @ git+https://github.com/lalmeras/clickable@v1.1#egg=clickable"
     ],
     python_requires='>=3.6',
     license="BSD license",
