@@ -32,7 +32,7 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        "clickable @ git+https://github.com/lalmeras/clickable@dev#egg=clickable"
+        "clickable @ git+https://github.com/lalmeras/clickable@v1.0#egg=clickable"
     ],
     python_requires='>=3.6',
     license="BSD license",
