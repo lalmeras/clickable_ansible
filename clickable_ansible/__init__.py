@@ -1,6 +1,6 @@
 """Ansible utilities for clickable"""
 
-__version__ = "0.9.0"
+__version__ = "1.0"
 
 import itertools
 import json
@@ -12,19 +12,12 @@ import pprint
 import re
 import shlex
 import subprocess
-
-try:  # py3
-    from shlex import quote
-except ImportError:  # py2
-    from pipes import quote
-
-import six
-
-from ruamel.yaml import YAML
+from shlex import quote
 
 import click
+import six
+import yaml
 
-import clickable.utils
 from clickable.utils import PathResolver
 from clickable.virtualenv import virtualenv
 import clickable.coloredlogs
@@ -37,29 +30,34 @@ logger = logging.getLogger('stdout.clickable')
 
 
 def _configure(ctx):
+    logger.info("Install ansible-galaxy roles in dependencies/galaxy-roles/")
     virtualenv(ctx.obj['path_resolver'], ctx.obj['ansible']['virtualenv'])
     virtualenv_path = ctx_get(ctx, 'virtualenv_path')
-    clickable.utils.oneline_run(_vcommand(virtualenv_path, 'ansible-galaxy',
-                      'install',
-                      '-n', # do not install recursive dependencies
-                      '-r', 'dependencies/requirements.yml',
-                      '--roles-path', 'dependencies/galaxy-roles'))
+    env = dict(os.environ)
+    env["ANSIBLE_COLLECTIONS_PATHS"] = "dependencies/galaxy-collections/"
+    env["ANSIBLE_ROLES_PATH"] = "dependencies/galaxy-roles/"
+    logger.info("Install ansible-galaxy collections in dependencies/galaxy-collections/")
+    subprocess.check_call(_vcommand(virtualenv_path, 'ansible-galaxy',
+                  'install',
+                  '--force',
+                  '-r', 'dependencies/requirements.yml'),
+                  env=env)
 
 
 def _vault_secure_yaml(ctx):
     import subprocess
     vault_file = 'inventory/group_vars/all/secure.yml'
     command = _ovh_vault_command(ctx, 'view', vault_file)
-    yaml = subprocess.check_output(command)
-    secure = YAML(typ='safe').load(yaml)
+    yaml_content = subprocess.check_output(command)
+    secure = yaml.safe_load(yaml_content)
     return secure
 
 
 def _vault_action_file(ctx, action, vault_file):
     import subprocess
     command = _ovh_vault_command(ctx, action, vault_file)
-    yaml = subprocess.check_output(command)
-    print(yaml)
+    yaml_content = subprocess.check_output(command)
+    print(yaml_content)
 
 
 def run_playbook(ctx, playbook=None,
@@ -110,7 +108,7 @@ def run_interactive(ctx, command, args, print_command):
         all_args = [os.path.join(virtualenv_path, 'bin', command)] + args
         all_command = ' '.join([quote(i) for i in all_args])
         logger.info('running: {} {}'.format(environ, all_command))
-    clickable.utils.interactive(_vcommand(virtualenv_path, command, *args))
+    subprocess.check_call(_vcommand(virtualenv_path, command, *args))
 
 
 def run_ansible_module(ctx, host, module, module_args,
