@@ -1,5 +1,8 @@
 # History
 
+## v1.2
+
+- updated clickable (v1.3)
 
 ## v1.1
 
