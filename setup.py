@@ -19,7 +19,7 @@ test_requirements = [
 
 setup(
     name='clickable_ansible',
-    version="1.2.dev0",
+    version="1.2",
     description=("Ansible helpers for clickable."),
     long_description=readme + '\n\n' + history,
     author="Laurent Almeras",
@@ -32,7 +32,7 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        "clickable @ git+https://github.com/lalmeras/clickable@v1.1#egg=clickable"
+        "clickable @ git+https://github.com/lalmeras/clickable@v1.3#egg=clickable"
     ],
     python_requires='>=3.6',
     license="BSD license",
