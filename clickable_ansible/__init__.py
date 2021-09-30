@@ -1,6 +1,6 @@
 """Ansible utilities for clickable"""
 
-__version__ = "1.2"
+__version__ = "1.3"
 
 import itertools
 import json
@@ -129,7 +129,7 @@ def run_ansible_module(ctx, host, module, module_args,
         args.append(ansible_user)
     if inventory:
         args.append('-i')
-        args.append(inventory)
+        args.append(','.join(inventory))
     if ask_become_pass:
         args.append('--ask-become-pass')
     if ask_vault_pass:
@@ -225,13 +225,13 @@ def run_module_task(click_group, name, static_args='',
     @click.option('--become-user', default='root', help='become user')
     @click.option('--args', '-a', help='module arguments')
     @click.option('--user', '-u')
-    @click.option('--inventory', '-i', default=[])
+    @click.option('--inventory', '-i', default=[], multiple=True)
     @click.option('--ask-become-pass', '-K', default=False)
     @click.option('--ask-vault-pass', default=False)
     @click.option('--check', '-C', default=False, is_flag=True)
     @click.option('--diff', '-D', default=False, is_flag=True)
     @click.option('-v', '--verbose', count=True)
-    @click.option('--extra-vars', '-e', default=[])
+    @click.option('--extra-vars', '-e', default=[], multiple=True)
     @decorate(decorators)
     def inside_run(ctx, host, module_name, user, args, inventory,
                    become, become_user, ask_become_pass, ask_vault_pass,
