@@ -1,5 +1,11 @@
 # History
 
+## v1.3
+
+- fix bugs with multiple args and click 8.0
+  (if multiple is not set and default is [],
+  a string '[]' is given as argument)
+
 ## v1.2
 
 - updated clickable (v1.3)
