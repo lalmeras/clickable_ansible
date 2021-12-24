@@ -1,5 +1,9 @@
 # History
 
+## v1.4
+
+Publishing procedure update.
+
 ## v1.3
 
 - fix bugs with multiple args and click 8.0
