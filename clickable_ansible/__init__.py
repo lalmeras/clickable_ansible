@@ -1,6 +1,6 @@
 """Ansible utilities for clickable"""
 
-__version__ = "1.4.dev0"
+__version__ = "1.4"
 
 import itertools
 import json
